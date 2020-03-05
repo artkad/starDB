@@ -5,7 +5,7 @@
 }
 .person-details .person-image {
   width: 150px;
-  height: 150px;
+  height: auto;
   border-radius: 10px;
   margin-right: 1rem;
 }
