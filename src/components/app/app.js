@@ -1,56 +1,37 @@
 import React, { Component } from 'react';
 import Header from '../header';
-import ItemList from '../item-list';
-import PersonDetails from '../person-details';
 import RandomPlanet from '../random-planet';
-
+import ErrorBoundry from '../error-boundry';
+import SwapiService from '../../services/swapi-service';
 import './app.css';
-
+import { PeoplePage, PlanetsPage, StarshipsPage} from '../pages';
+import { SwapiServiceProvider} from '../swapi-service-context';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 export default class App extends Component {
-  
-    state = {
-      showRandomPlanet: true,
-      selectedPerson: 4
-    };
-
-    toggleRandomPlanet = () => {
-      this.setState((state) => {
-        return {
-          showRandomPlanet: !state.showRandomPlanet
-        };
-      });
-    };
-
-    onPersonSelected = (id) => {
-      this.setState({
-        selectedPerson: id
-      });
-    };
+  swapiService = new SwapiService();
+    
   render() {
 
-    const planet = this.state.showRandomPlanet ?
-    <RandomPlanet /> : 
-    null;
-
     return ( 
-      <div className='stardb-app'>
-        <Header />
-        { planet }
+      <ErrorBoundry>
+        <SwapiServiceProvider value={this.swapiService} >
+          <Router>
+            <div className="stardb-app">
+              <Header />
+              <RandomPlanet />
+                <Route path='/'
+                render={() => <h2>Welcom to StartDB</h2>}
+                exact />
+                <Route path='/people' component={ PeoplePage } />
+                <Route path='/planets' component={ PlanetsPage } />
+                <Route path='/starships' component={ StarshipsPage } />
+            </div>
+          </Router>
+        </SwapiServiceProvider>
+      </ErrorBoundry> 
+      
 
-        <button className='toggle-planet btn btn-warning btn-lg'
-        onClick={this.toggleRandomPlanet}>
-          Toggle Random Planet
-        </button>
 
-        <div className='row mb2'>
-          <div className="col-md-6">
-            <ItemList onItemSelected={this.onPersonSelected} />
-          </div>
-          <div className="col-md-6">
-            <PersonDetails personId={this.state.selectedPerson} />
-          </div>
-        </div>
-      </div>
       );
     }
   
